@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { KeyRound } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -28,7 +28,7 @@ const formSchema = z.object({
         })
 })
 
-export default function ResetPassword() {
+const ResetPasswordForm = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
@@ -81,6 +81,51 @@ export default function ResetPassword() {
     if (!token) return null;
 
     return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6 animate-[fadeIn_1.4s_ease-in]">
+                <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-[#6C7070]">New Password</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="password"
+                                    placeholder="Enter new password"
+                                    {...field}
+                                    className="h-11 text-white rounded-lg border-[#6C7070] focus:border-yellow-500/50 focus:border-[3px] transition-colors duration-300 focus:text-yellow-500"
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-500" />
+                        </FormItem>
+                    )}
+                />
+
+                <Button
+                    type="submit"
+                    className={`w-full h-11 bg-[#3E4343] text-md rounded-2xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300 hover:bg-[#4a5151] ${isLoading ? 'animate-pulse' : ''}`}
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Updating...' : 'Reset Password'}
+                </Button>
+            </form>
+        </Form>
+    );
+};
+
+const FormSkeleton = () => (
+    <div className="space-y-4 md:space-y-6">
+        <div className="animate-pulse space-y-2">
+            <div className="h-4 w-24 bg-gray-700 rounded"></div>
+            <div className="h-11 bg-gray-700 rounded-lg"></div>
+        </div>
+        <div className="h-11 bg-gray-700 rounded-2xl animate-pulse"></div>
+    </div>
+);
+
+export default function ResetPassword() {
+    return (
         <div className="min-h-screen flex items-center justify-center bg-[#0E1313] relative overflow-hidden">
             <Background />
 
@@ -102,36 +147,9 @@ export default function ResetPassword() {
                     Enter a new strong password for your account
                 </p>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6 animate-[fadeIn_1.4s_ease-in]">
-                        <FormField
-                            control={form.control}
-                            name="newPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-[#6C7070]">New Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="Enter new password"
-                                            {...field}
-                                            className="h-11 text-white rounded-lg border-[#6C7070] focus:border-yellow-500/50 focus:border-[3px] transition-colors duration-300 focus:text-yellow-500"
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-red-500" />
-                                </FormItem>
-                            )}
-                        />
-
-                        <Button
-                            type="submit"
-                            className={`w-full h-11 bg-[#3E4343] text-md rounded-2xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300 hover:bg-[#4a5151] ${isLoading ? 'animate-pulse' : ''}`}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Updating...' : 'Reset Password'}
-                        </Button>
-                    </form>
-                </Form>
+                <Suspense fallback={<FormSkeleton />}>
+                    <ResetPasswordForm />
+                </Suspense>
 
                 <div className="mt-4 text-center text-sm animate-[fadeIn_2s_ease-in]">
                     <span className="text-gray-500">
@@ -143,5 +161,5 @@ export default function ResetPassword() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
