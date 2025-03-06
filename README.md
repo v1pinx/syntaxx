@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Syntaxx: Modern Code Editor
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+This project is a full-featured online code editor that enables users to write, save, and execute code in multiple languages.
+
+## Features
+
+-   Next.js (App Router) with TypeScript (Done)
+-    Monaco Editor for code editing (Done)
+-   JWT-based authentication with Google (Done)
+-   Syntax highlighting (Done)
+-   Local and Cloud file storage
+-   Backend API for secure code execution
+-   Dockerized environment for running JavaScript, Python, and C++ code
+-   MongoDB  project storage with CRUD functionality
+
+## Tech Stack
+
+-   **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS, ShadCN
+-   **Backend:** Node.js, Express.js / Fastify, WebSockets
+-   **Database:** MongoDB (Mongoose)
+-   **Authentication:** Custom-built authentication system with JWT
+-   **Cloud Storage:** Supabase (Not Implemented yet)
+-   **Code Execution:** Dockerized Sandbox (Not Implemented yet)
+-   **AI Features:** I will definitely think about later
+
+## Installation
+
+```sh
+# Clone the repository
+git clone https://github.com/v1pinx/syntaxx.git
+cd syntaxx
+
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
-# or
-bun dev
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Roadmap
+-   Add support for more languages (Rust, Go, Java)
+-   Implement AI-powered debugging
+-   Improve real-time collaboration performance
+-   Expand cloud storage options
+## License
+MIT License © 2025 Vipin Kumar
+## Contributing
+Pull requests are welcome. Open an issue for any feature requests or bugs.
+For any inquiries, contact [vipin.officialbiz@gmail.com](mailto:vipin.officialbiz@gmail.com)
