@@ -6,11 +6,9 @@ import { useForm } from "react-hook-form"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Code } from "lucide-react";
@@ -20,7 +18,6 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
-import { verifyToken } from "@/lib/auth";
 import Background from "@/app/components/Background";
 
 const formSchema = z.object({
@@ -41,7 +38,7 @@ export default function Login() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            let token = await getCookie("token");
+            const token = await getCookie("token");
             if (!token) {
                 return;
             }
@@ -180,11 +177,12 @@ export default function Login() {
 
                 <div className="mt-4 text-center text-sm animate-[fadeIn_2s_ease-in]">
                     <span className="text-gray-500">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <a href="/signup" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
                             Sign up
                         </a>
                     </span>
+
                 </div>
             </div>
         </div>

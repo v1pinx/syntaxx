@@ -17,7 +17,7 @@ export default function CodeEditor() {
     const [language, setLanguage] = useState('javascript');
     const [codeRunning, setCodeRunning] = useState(false);
     const [code, setCode] = useState('');
-    const [serverStatus, setServerStatus] = useState('Server is down');
+    const serverStatus = "Server is down";
 
     useEffect(() => {
         const storedCode = localStorage.getItem(language);

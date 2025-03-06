@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Blocks, Code, Share, Sparkles } from "lucide-react";
+import { Code, Share, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function Navbar() {

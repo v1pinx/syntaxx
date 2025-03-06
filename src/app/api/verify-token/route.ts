@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const isValid = verifyToken(token);
 
     return NextResponse.json({ isValid: !!isValid, decoded: isValid });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { isValid: false, error: "Invalid request" },
       { status: 400 }

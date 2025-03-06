@@ -6,11 +6,9 @@ import { useForm } from "react-hook-form"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Code } from "lucide-react";
@@ -18,7 +16,7 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoEyeSharp, IoEyeOffSharp } from "react-icons/io5";
 import { useRouter } from 'next/navigation';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import toast from "react-hot-toast";
 import Background from "@/app/components/Background";
 
