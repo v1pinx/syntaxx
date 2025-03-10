@@ -8,9 +8,18 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
-import { Loader2, Play } from 'lucide-react';
+import { Copy, Loader2, Play, Share } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function CodeEditor() {
@@ -26,10 +35,13 @@ export default function CodeEditor() {
             return;
         }
         setCode(getDefaultCodeByLanguage(language));
+
+        
     }, [language]);
 
 
     const handleEditorDidMount = (editor: any, monaco: any) => {
+
         monaco.editor.defineTheme('darkYellowTheme', {
             base: 'vs-dark',
             inherit: true,
@@ -125,6 +137,7 @@ export default function CodeEditor() {
     const onReset = () => {
         localStorage.removeItem(language);
         setCode(getDefaultCodeByLanguage(language));
+        toast.success("Code Reset")
     }
 
     const panelStyle = {
@@ -132,6 +145,10 @@ export default function CodeEditor() {
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
         animation: 'slideUp 0.5s ease-out'
     };
+
+    const onShare = () => {
+
+    }
 
     return (
         <div className="relative p-2 md:p-4 w-full">
@@ -192,7 +209,41 @@ export default function CodeEditor() {
                     style={panelStyle}>
                     <div className="px-2 md:px-4 py-3 border-b border-[#3E4343] flex justify-between items-center">
                         <h3 className="text-white font-medium">Output</h3>
-                        <Button className='cursor-pointer text-xs md:text-sm' variant="secondary" onClick={onReset}>Reset</Button>
+                        <div className='flex gap-3 items-center'>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-indigo-500 hover:bg-indigo-600 text-white transition-colors duration-300 cursor-pointer"
+                                    >
+                                        <Share className="w-4 h-4" />
+                                        <span className="text-sm font-medium text-white">Share Code</span>
+                                    </Button>
+                                </DialogTrigger>
+
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                        <DialogTitle>Share Code</DialogTitle>
+                                        <DialogDescription>
+                                            Here’s a link to share your code:
+                                            <input
+                                                type="text"
+                                                value="http://example.com/code"
+                                                readOnly
+                                                className="w-full mt-2 px-3 py-2 rounded-md border border-gray-300"
+                                            />
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Copy onClick={() => {
+                                            navigator.clipboard.writeText('http://example.com/code');
+                                            toast.success("Copied");
+                                        }} className='cursor-pointer' />
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+
+                            <Button className='cursor-pointer text-xs md:text-sm' variant="secondary" onClick={onReset}>Reset</Button>
+                        </div>
                     </div>
                     <div className="h-32 md:h-40 lg:h-full p-4 text-gray-300">
                         {/* Output content would go here */}
