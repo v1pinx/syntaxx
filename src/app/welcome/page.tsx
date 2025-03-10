@@ -4,6 +4,7 @@ import { Code, Users, Terminal, RefreshCw, Cloud } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
+import Link from "next/link";
 export default function Welcome() {
     const router = useRouter();
     const [currentFeature, setCurrentFeature] = useState(0);
@@ -104,14 +105,14 @@ console.log("Minimum number of multiplications:", matrixChainMultiplication(dime
                             A powerful, modern code editor designed for modern developers.
                             Write better code, collaborate in real-time, and save your code to the cloud.
                         </p>
-                        <div className="flex flex-wrap gap-4">
+                        <Link className="flex flex-wrap gap-4" href="/code">
                             <Button
                                 className="bg-yellow-500 text-black cursor-pointer hover:bg-yellow-400 px-8 py-6 h-auto text-lg font-medium rounded-2xl transition-all duration-300 transform hover:scale-[1.02]"
                                 onClick={() => router.push("/")}
                             >
                                 Try CodeEditor
                             </Button>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Code Editor Preview */}
