@@ -42,7 +42,7 @@ export default function ForgotPassword() {
 
             if (response.status === 200) {
                 toast.success(response.data.message || "Password reset link sent to your email");
-                router.push("/Login");
+                router.push("/login");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -111,7 +111,7 @@ export default function ForgotPassword() {
                 <div className="mt-4 text-center text-sm animate-[fadeIn_2s_ease-in]">
                     <span className="text-gray-500">
                         Remember your password?{' '}
-                        <a href="/Login" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
+                        <a href="/login" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
                             Back to Login
                         </a>
                     </span>

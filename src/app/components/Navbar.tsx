@@ -17,6 +17,7 @@ export default function Navbar() {
         const checkAuth = async () => {
             const token = await getCookie("token");
             if (!token) {
+                console.log("No token found");
                 return;
             }
             const data = await axios.post('/api/verify-token', {
@@ -88,7 +89,7 @@ export default function Navbar() {
                         </span>
                     </Link>
                     {!isLogin && (
-                        <Link href="/Login">
+                        <Link href="/login">
                             <Button variant="outline" className="cursor-pointer rounded-md">Login</Button>
                         </Link>
                     )}

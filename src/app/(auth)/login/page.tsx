@@ -84,6 +84,10 @@ export default function Login() {
         setIsLoading(false);
     }
 
+    const handleGoogleLogin = () => {
+        window.location.href = "/api/auth/google";
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#0E1313] relative overflow-hidden">
             <Background />
@@ -168,8 +172,9 @@ export default function Login() {
 
                 <Button
                     variant="outline"
-                    className="w-full h-11 text-md rounded-2xl transform hover:scale-[1.02] transition-all duration-300 animate-[fadeIn_1.8s_ease-in]"
+                    className="w-full h-11 text-md rounded-2xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300 animate-[fadeIn_1.8s_ease-in]"
                     size="lg"
+                    onClick={handleGoogleLogin}
                 >
                     <FcGoogle />
                     Continue with Google

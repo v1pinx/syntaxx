@@ -44,7 +44,7 @@ const ResetPasswordForm = () => {
     useEffect(() => {
         if (!token) {
             toast.error("Invalid or expired reset link");
-            router.push("/Login");
+            router.push("/login");
         }
     }, [token, router]);
 
@@ -61,7 +61,7 @@ const ResetPasswordForm = () => {
 
             if (response.status === 200) {
                 toast.success(response.data.message || "Password successfully reset");
-                // router.push("/Login");
+                // router.push("/login");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -154,7 +154,7 @@ export default function ResetPassword() {
                 <div className="mt-4 text-center text-sm animate-[fadeIn_2s_ease-in]">
                     <span className="text-gray-500">
                         Remembered your password?{' '}
-                        <a href="/Login" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
+                        <a href="/login" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
                             Back to Login
                         </a>
                     </span>

@@ -51,7 +51,7 @@ export default function Login() {
             });
             if (response.status == 201) {
                 toast.success("Signup successful");
-                router.push('/Login');
+                router.push('/login');
             }
 
         } catch (error) {
@@ -76,6 +76,10 @@ export default function Login() {
         }
         setIsLoading(false);
     }
+
+    const handleGoogleLogin = () => {
+        window.location.href = "/api/auth/google";
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#0E1313] relative overflow-hidden">
@@ -182,8 +186,9 @@ export default function Login() {
 
                 <Button
                     variant="outline"
-                    className="w-full h-11 text-md rounded-2xl transform hover:scale-[1.02] transition-all duration-300 animate-[fadeIn_1.8s_ease-in]"
+                    className="w-full h-11 text-md rounded-2xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300 animate-[fadeIn_1.8s_ease-in]"
                     size="lg"
+                    onClick={handleGoogleLogin}
                 >
                     <FcGoogle />
                     Continue with Google
@@ -192,7 +197,7 @@ export default function Login() {
                 <div className="mt-4 text-center text-sm animate-[fadeIn_2s_ease-in]">
                     <span className="text-gray-500">
                         Already have an account?{' '}
-                        <a href="/Login" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
+                        <a href="/login" className="font-medium text-white hover:text-yellow-500 transition-colors duration-300">
                             Login
                         </a>
                     </span>
