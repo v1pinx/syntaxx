@@ -34,15 +34,13 @@ export default function CodeEditor() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const outputRef = useRef(null);
 
-    // Environmental variables should be accessed safely
     const RAPIDAPI_KEY = process.env.NEXT_PUBLIC_RAPIDAPI_KEY || '';
-    const RAPIDAPI_HOST = process.env.NEXT_PUBLIC_RAPIDAPI_HOST || 'judge0-ce.p.rapidapi.com';
+    const RAPIDAPI_HOST = process.env.NEXT_PUBLIC_RAPIDAPI_HOST || '';
     const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api/share';
 
     const serverStatus = RAPIDAPI_KEY ? "Connected to execution server" : "Server configuration missing";
 
     useEffect(() => {
-        // Load code from localStorage on component mount and language change
         const storedCode = localStorage.getItem(`code_${language}`);
         if (storedCode && storedCode.length > 0) {
             setCode(storedCode);
@@ -175,8 +173,8 @@ export default function CodeEditor() {
                         fields: "*"
                     },
                     headers: {
-                        "x-rapidapi-key": "be541f3967msh00718390cf45030p1f8a10jsn8462f7489e86",
-                        "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+                        "x-rapidapi-key": RAPIDAPI_KEY,
+                        "x-rapidapi-host": RAPIDAPI_HOST,
                         "Content-Type": "application/json",
                     }
                 }
@@ -200,8 +198,8 @@ export default function CodeEditor() {
                                     fields: "*"
                                 },
                                 headers: {
-                                    "x-rapidapi-key": "be541f3967msh00718390cf45030p1f8a10jsn8462f7489e86",
-                                    "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+                                    "x-rapidapi-key": RAPIDAPI_KEY,
+                                    "x-rapidapi-host": RAPIDAPI_HOST,
                                 },
                             }
                         );
