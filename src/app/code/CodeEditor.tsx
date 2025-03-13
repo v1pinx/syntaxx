@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import {
@@ -33,12 +32,6 @@ export default function CodeEditor() {
     const [shareUrl, setShareUrl] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const outputRef = useRef(null);
-
-    const RAPIDAPI_KEY = process.env.NEXT_PUBLIC_RAPIDAPI_KEY || '';
-    const RAPIDAPI_HOST = process.env.NEXT_PUBLIC_RAPIDAPI_HOST || '';
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api/share';
-
-    const serverStatus = RAPIDAPI_KEY ? "Connected to execution server" : "Server configuration missing";
 
     useEffect(() => {
         const storedCode = localStorage.getItem(`code_${language}`);
@@ -144,12 +137,6 @@ export default function CodeEditor() {
     };
 
     const onCodeSubmit = async () => {
-        if (!RAPIDAPI_KEY) {
-            setOutput("API key not configured. Please check your environment variables.");
-            setOutputType('error');
-            toast.error("API key not configured");
-            return;
-        }
 
         setCodeRunning(true);
         setOutput("Running code...");
@@ -159,95 +146,35 @@ export default function CodeEditor() {
         const encodedCode = Buffer.from(code).toString("base64");
 
         try {
-            // Submit code
-            const response = await axios.post(
-                "https://judge0-ce.p.rapidapi.com/submissions",
-                {
-                    language_id: languageId,
-                    source_code: encodedCode,
-                    stdin: "",
-                },
-                {
-                    params: {
-                        base64_encoded: "true",
-                        fields: "*"
-                    },
-                    headers: {
-                        "x-rapidapi-key": RAPIDAPI_KEY,
-                        "x-rapidapi-host": RAPIDAPI_HOST,
-                        "Content-Type": "application/json",
-                    }
-                }
-            );
+            const response = await axios.post('/api/execute', {
+                languageId,
+                encodedCode,
+                stdin: '',
+            });
 
-            if (response.status === 201) {
-                const submissionId = response.data.token;
-
-                // Poll for results with exponential backoff
-                let attempts = 0;
-                const maxAttempts = 10;
-                const getOutput = async () => {
-                    while (attempts < maxAttempts) {
-                        attempts++;
-
-                        const outputResponse = await axios.get(
-                            `https://judge0-ce.p.rapidapi.com/submissions/${submissionId}`,
-                            {
-                                params: {
-                                    base64_encoded: "true",
-                                    fields: "*"
-                                },
-                                headers: {
-                                    "x-rapidapi-key": RAPIDAPI_KEY,
-                                    "x-rapidapi-host": RAPIDAPI_HOST,
-                                },
-                            }
-                        );
-
-                        const { status, stdout, stderr, compile_output, message } = outputResponse.data;
-
-                        // Check if execution is complete
-                        if (status.id >= 3) { // Status 3 or higher means finished
-                            if (stdout) {
-                                const decodedOutput = Buffer.from(stdout, "base64").toString('utf-8');
-                                setOutput(decodedOutput);
-                                setOutputType('success');
-                                return;
-                            } else if (stderr) {
-                                const decodedError = Buffer.from(stderr, "base64").toString('utf-8');
-                                setOutput(`Runtime Error:\n${decodedError}`);
-                                setOutputType('error');
-                                return;
-                            } else if (compile_output) {
-                                const decodedCompileError = Buffer.from(compile_output, "base64").toString('utf-8');
-                                setOutput(`Compilation Error:\n${decodedCompileError}`);
-                                setOutputType('error');
-                                return;
-                            } else if (message) {
-                                setOutput(`Execution Error:\n${message}`);
-                                setOutputType('error');
-                                return;
-                            } else {
-                                setOutput("No output generated.");
-                                setOutputType('info');
-                                return;
-                            }
-                        }
-
-                        // If execution not complete, wait before polling again
-                        // Exponential backoff with a max of 2 seconds
-                        const delay = Math.min(2000, 250 * Math.pow(2, attempts));
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                    }
-
-                    // If we've reached max attempts without a result
-                    setOutput("Execution timed out. The server may be busy.");
+            if (response.data.message == "Success") {
+                if(response.data.identifier == "stdout") {
+                    setOutput(response.data.data);
+                    setOutputType('success');
+                }else if(response.data.identifier == "stderr"){
+                    setOutput(response.data.data);
                     setOutputType('error');
-                };
-
-                await getOutput();
+                }else if(response.data.identifier == "compile_output"){
+                    setOutput(response.data.data);
+                    setOutputType('error');
+                }else{
+                    setOutput(response.data.data);
+                    setOutputType('error');
+                }
+                 
             }
         } catch (error: any) {
+            if(error.response.status == 400){
+                toast.error("Invalid request");
+                setOutput("Invalid request");
+                setOutputType('error');
+                return;
+            }
             console.error("Code execution error:", error);
             setOutput(`Error: ${error.response?.data?.message || error.message || "Could not execute code."}`);
             setOutputType('error');
@@ -283,14 +210,13 @@ export default function CodeEditor() {
     const onShare = async () => {
 
         const authData = await checkAuth();
-        if(!authData || authData!.status != 200){
+        if (!authData || authData!.status != 200) {
             toast.error("Login First to Share the Code");
             return;
         }
 
         try {
-            // Call your API to save the code and get a shareable URL
-            const response = await axios.post(API_URL, {
+            const response = await axios.post('/api/share', {
                 username: "guest",
                 language,
                 code
@@ -383,13 +309,6 @@ export default function CodeEditor() {
                         }}
                         loading={<div className="flex items-center justify-center h-full">Loading editor...</div>}
                     />
-
-                    {!RAPIDAPI_KEY && (
-                        <div className="absolute bottom-2 left-2 right-2 px-3 py-2 bg-red-900/70 text-white rounded flex items-center gap-2 text-sm">
-                            <AlertTriangle className="h-4 w-4" />
-                            API key not configured. Code execution will not work.
-                        </div>
-                    )}
                 </div>
 
                 {/* Output Panel */}
