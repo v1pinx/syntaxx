@@ -166,7 +166,11 @@ export default function CodeEditor() {
                     setOutput(response.data.data);
                     setOutputType('error');
                 }
-                 
+            }else if(response.data.message == "Error"){
+                console.log("Error:", response);
+                setOutput(response.data.data);
+                setOutputType('error');
+                toast.error("Code execution failed");   
             }
         } catch (error: any) {
             if(error.response.status == 400){
@@ -174,7 +178,7 @@ export default function CodeEditor() {
                 setOutput("Invalid request");
                 setOutputType('error');
                 return;
-            }
+            } 
             console.error("Code execution error:", error);
             setOutput(`Error: ${error.response?.data?.message || error.message || "Could not execute code."}`);
             setOutputType('error');
