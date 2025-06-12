@@ -26,7 +26,7 @@ export default function Pricing() {
 
         if (planType === "Free") {
             toast.success("Free plan activated!");
-            router.push("/editor");
+            router.push("/code");
             setIsLoading(false);
             return;
         }
@@ -65,7 +65,7 @@ export default function Pricing() {
                 order_id: orderData.id,
                 handler: function (response: any) {
                     toast.success("Payment successful!");
-                    router.push("/");
+                    router.push("/code");
                 },
                 prefill: {
                     name: "Dev User",
