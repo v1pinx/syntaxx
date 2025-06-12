@@ -65,7 +65,7 @@ export default function Pricing() {
                 order_id: orderData.id,
                 handler: function (response: any) {
                     toast.success("Payment successful!");
-                    router.push("/editor");
+                    router.push("/");
                 },
                 prefill: {
                     name: "Dev User",
