@@ -16,7 +16,7 @@ export default function Pricing() {
     const handleSubscribe = async (planType: string) => {
         setIsLoading(true);
         const token = getCookie("token");
-        
+
         if (!token) {
             toast.error("Please login to subscribe");
             router.push("/login");
@@ -24,17 +24,69 @@ export default function Pricing() {
             return;
         }
 
-        try {
-            // Mock subscription process
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            toast.success(`Successfully subscribed to ${planType} plan!`);
+        if (planType === "Free") {
+            toast.success("Free plan activated!");
             router.push("/editor");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            // Load Razorpay script
+            const res = await new Promise((resolve) => {
+                const script = document.createElement("script");
+                script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                script.onload = () => resolve(true);
+                script.onerror = () => resolve(false);
+                document.body.appendChild(script);
+            });
+
+            if (!res) {
+                toast.error("Failed to load Razorpay SDK.");
+                setIsLoading(false);
+                return;
+            }
+
+            // Create order from backend
+            const orderRes = await fetch("/api/razorpay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: 1 }) // ₹1
+            });
+
+            const orderData = await orderRes.json();
+
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+                amount: orderData.amount,
+                currency: "INR",
+                name: "SyntaxX",
+                description: "Pro Plan Subscription",
+                order_id: orderData.id,
+                handler: function (response: any) {
+                    toast.success("Payment successful!");
+                    router.push("/editor");
+                },
+                prefill: {
+                    name: "Dev User",
+                    email: "user@example.com", // optionally replace with real user data
+                    contact: "9999999999"
+                },
+                theme: {
+                    color: "#FACC15"
+                }
+            };
+
+            const paymentObject = new (window as any).Razorpay(options);
+            paymentObject.open();
         } catch (error) {
-            toast.error("Subscription failed. Please try again.");
+            console.error(error);
+            toast.error("Payment failed. Please try again.");
         }
 
         setIsLoading(false);
     };
+
 
     const plans = [
         {
@@ -61,14 +113,14 @@ export default function Pricing() {
                 "Enhanced syntax highlighting",
                 "Collaboration tools",
                 "Priority support"
-                
+
             ],
             buttonText: "Upgrade Now",
             highlight: true,
             icon: <Terminal className="w-6 h-6 text-yellow-500 mb-2" />
         },
     ];
-    
+
 
     const features = [
         {
@@ -101,8 +153,8 @@ export default function Pricing() {
             {/* Feature highlights */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-6xl mx-auto mb-16 z-10 px-4 animate-[fadeIn_0.9s_ease-in]">
                 {features.map((feature, index) => (
-                    <div 
-                        key={index} 
+                    <div
+                        key={index}
                         className="p-6 bg-[#1A1D1D]/60 backdrop-blur-sm rounded-xl border border-[#3E4343]/50 hover:border-yellow-500/30 transition-all duration-300"
                     >
                         <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
@@ -113,16 +165,15 @@ export default function Pricing() {
 
             {/* Billing toggle */}
             <div className="flex items-center justify-center mb-12 z-10 animate-[fadeIn_1s_ease-in]">
-                <div 
+                <div
                     className="flex p-1 bg-[#1A1D1D] rounded-lg border border-[#3E4343]"
                 >
                     <button
                         onClick={() => setSelectedPlan('onetime')}
-                        className={`px-6 py-2 rounded-md transition-all duration-300 flex items-center ${
-                            selectedPlan === 'onetime' 
-                                ? 'bg-yellow-500 text-black font-medium' 
+                        className={`px-6 py-2 rounded-md transition-all duration-300 flex items-center ${selectedPlan === 'onetime'
+                                ? 'bg-yellow-500 text-black font-medium'
                                 : 'text-[#6C7070] hover:text-white'
-                        }`}
+                            }`}
                     >
                         One-time <Gift className="w-4 h-4 ml-1" />
                     </button>
@@ -132,13 +183,12 @@ export default function Pricing() {
             {/* Pricing cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 z-10 px-4 max-w-6xl mx-auto animate-[fadeIn_1.2s_ease-in]">
                 {plans.map((plan, index) => (
-                    <div 
+                    <div
                         key={index}
-                        className={`w-full p-6 md:p-8 bg-[#0E1313]/50 backdrop-blur-md rounded-2xl relative animate-[slideUp_0.5s_ease-out] transition-all duration-300 hover:transform hover:scale-[1.03] ${
-                            plan.highlight 
-                                ? 'border-yellow-500/50 hover:border-yellow-500' 
+                        className={`w-full p-6 md:p-8 bg-[#0E1313]/50 backdrop-blur-md rounded-2xl relative animate-[slideUp_0.5s_ease-out] transition-all duration-300 hover:transform hover:scale-[1.03] ${plan.highlight
+                                ? 'border-yellow-500/50 hover:border-yellow-500'
                                 : 'hover:border-yellow-500/20 border-[#3E4343]/50'
-                        }`}
+                            }`}
                         style={{ border: '1px solid' }}
                     >
                         {plan.highlight && (
@@ -146,13 +196,13 @@ export default function Pricing() {
                                 MOST POPULAR
                             </div>
                         )}
-                        
+
                         <div className="flex flex-col items-center md:items-start">
                             {plan.icon}
                             <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                             <p className="text-[#6C7070] mb-6 text-center md:text-left">{plan.description}</p>
                         </div>
-                        
+
                         <div className="mb-6">
                             <div className="flex items-end">
                                 <span className="text-4xl font-bold text-white">{plan.price}</span>
@@ -164,7 +214,7 @@ export default function Pricing() {
                                 </div>
                             )}
                         </div>
-                        
+
                         <ul className="space-y-3 mb-8">
                             {plan.features.map((feature, fIndex) => (
                                 <li key={fIndex} className="flex items-start">
@@ -173,14 +223,13 @@ export default function Pricing() {
                                 </li>
                             ))}
                         </ul>
-                        
+
                         <Button
                             onClick={() => handleSubscribe(plan.name)}
-                            className={`w-full h-11 text-md rounded-2xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300 ${
-                                plan.highlight 
-                                    ? 'bg-yellow-500 text-black hover:bg-yellow-400' 
+                            className={`w-full h-11 text-md rounded-2xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300 ${plan.highlight
+                                    ? 'bg-yellow-500 text-black hover:bg-yellow-400'
                                     : 'bg-[#3E4343] text-white hover:bg-[#4a5151]'
-                            } ${isLoading ? 'animate-pulse' : ''}`}
+                                } ${isLoading ? 'animate-pulse' : ''}`}
                             disabled={isLoading}
                         >
                             {plan.buttonText}
@@ -192,10 +241,10 @@ export default function Pricing() {
             {/* Language support section */}
             <div className="mt-24 z-10 px-4 max-w-4xl mx-auto animate-[fadeIn_1.3s_ease-in]">
                 <h2 className="text-2xl md:text-3xl text-white font-bold mb-8 text-center">Supported Languages & Frameworks</h2>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {['JavaScript', 'TypeScript', 'Python', 'Java', 'C++'].map((lang, index) => (
-                        <div 
+                        <div
                             key={index}
                             className="px-4 py-3 bg-[#1A1D1D]/40 rounded-lg border border-[#3E4343]/30 text-center text-[#E0E0E0] text-sm hover:border-yellow-500/30 transition-all duration-300"
                         >
@@ -214,7 +263,7 @@ export default function Pricing() {
                     <p className="text-[#6C7070] mb-8 max-w-xl mx-auto">
                         Experience the power of our code editor with a free account. No credit card required.
                     </p>
-                    <Button 
+                    <Button
                         className="bg-yellow-500 text-black cursor-pointer hover:bg-yellow-400 px-8 py-6 h-auto text-lg font-medium rounded-2xl transition-all duration-300 transform hover:scale-[1.02]"
                         onClick={() => router.push("/signup")}
                     >
