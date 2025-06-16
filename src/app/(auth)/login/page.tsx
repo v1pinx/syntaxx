@@ -46,6 +46,7 @@ export default function Login() {
                 token: token,
             });
             if (data.status == 200) {
+                console.log(data);
                 router.push('/');
             } else {
                 deleteCookie("token");
